@@ -358,9 +358,10 @@ public class Neo4jUtil {
         cypherSql = "MATCH p=()-[r:seen]->() RETURN p LIMIT 25";
         cypherSql = "start u1=node(9275),u2=node(9300) match p=(u1)-[:like*1..3]-(u2) return p";
         cypherSql = "match p=(n:user)-[]-() where n.name =\"aa\" return p";
-        cypherSql = "match (n:user) -[r]-(b:user) where n.name=\"aaa\" and b.name=\"ddd\" return *";
+        // cypherSql = "match (n:user) -[r]-(b:user) where n.name=\"aaa\" and b.name=\"ddd\" return *";
         // cypherSql = "match (n:user) -[r]-(b:user) where n.name=\"aaa\" and b.name=\"ddd\" return r";
-        // cypherSql = "match (n:user) -[r]-(b:user) where n.name=\"aaa\" return *";
+        cypherSql = "MATCH p=()-[r:RE]->() RETURN p LIMIT 25";
+        // cypherSql = "match(n:Movie)-[r:is]-(b) where n.title=\"英雄\" return *";
         /************************************************/
         try {
             StatementResult result = excuteCypherSql(cypherSql);
@@ -401,10 +402,13 @@ public class Neo4jUtil {
                                 String sourceid = String.valueOf(rship.startNodeId());
                                 String targetid = String.valueOf(rship.endNodeId());
                                 Map<String, Object> map = rship.asMap();
+                                Map properties =  new HashMap<String,Object>();
                                 for (Map.Entry<String, Object> entry : map.entrySet()) {
                                     String key = entry.getKey();
-                                    rships.put(key, entry.getValue());
+                                    // rships.put(key, entry.getValue());
+                                    properties.put(key, entry.getValue());
                                 }
+                                rships.put("properties", properties);
                                 rships.put("uuid", uuid);
                                 rships.put("sourceid", sourceid);
                                 rships.put("targetid", targetid);
@@ -473,13 +477,17 @@ public class Neo4jUtil {
                                     String sourceid = String.valueOf(next.startNodeId());
                                     String targetid = String.valueOf(next.endNodeId());
                                     Map<String, Object> map = next.asMap();
+                                    Map properties =  new HashMap<String,Object>();
                                     for (Map.Entry<String, Object> entry : map.entrySet()) {
                                         String key = entry.getKey();
-                                        rships.put(key, entry.getValue());
+                                        // rships.put(key, entry.getValue());
+                                        properties.put(key, entry.getValue());
                                     }
+                                    rships.put("properties", properties);
                                     rships.put("uuid", uuid);
                                     rships.put("sourceid", sourceid);
                                     rships.put("targetid", targetid);
+                                    rships.put("relation","****relation 1111***"+ next.type());
                                     shipids.add(uuid);
                                     if (rships != null && !rships.isEmpty()) {
                                         ships.add(rships);

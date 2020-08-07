@@ -362,6 +362,10 @@ public class Neo4jUtil {
         // cypherSql = "match (n:user) -[r]-(b:user) where n.name=\"aaa\" and b.name=\"ddd\" return r";
         cypherSql = "MATCH p=()-[r:RE]->() RETURN p LIMIT 25";
         // cypherSql = "match(n:Movie)-[r:is]-(b) where n.title=\"英雄\" return *";
+        cypherSql = "start u=node(9302) match (u)-[r1:friend]->()-[r2:seen]->(m) return m";
+        cypherSql = "start u=node(9302) match path=(u)-[:friend]->(b)-[:seen]->(movie) where not (u)-[:seen]->(movie) return movie,path";
+        cypherSql = "match (n)-[r:like*1..5]-(b) where n.name=\"eee\" return *";
+        // cypherSql = "match (n)-[r:like*1..2]-(b) where n.name=\"eee\" return *";
         /************************************************/
         try {
             StatementResult result = excuteCypherSql(cypherSql);
@@ -496,27 +500,35 @@ public class Neo4jUtil {
                             }
                         } else if (typeName.contains("LIST")) {
                             Iterable<Value> val=pair.value().values();
-                            Value next = val.iterator().next();
-                            String type=next.type().name();
-                            if (type.equals("RELATIONSHIP")) {
-                                Relationship rship = next.asRelationship();
-                                String uuid = String.valueOf(rship.id());
-                                if (!shipids.contains(uuid)) {
-                                    String sourceid = String.valueOf(rship.startNodeId());
-                                    String targetid = String.valueOf(rship.endNodeId());
-                                    Map<String, Object> map = rship.asMap();
-                                    for (Map.Entry<String, Object> entry : map.entrySet()) {
-                                        String key = entry.getKey();
-                                        rships.put(key, entry.getValue());
+                            for(Iterator it = val.iterator(); it.hasNext(); ){
+                                Value next = (Value)it.next();
+                                String type=next.type().name();
+                                    if (type.equals("RELATIONSHIP")) {
+                                        Relationship rship = next.asRelationship();
+                                        String uuid = String.valueOf(rship.id());
+                                        if (!shipids.contains(uuid)) {
+                                            System.out.println("=======uuid======"+uuid);
+                                            String sourceid = String.valueOf(rship.startNodeId());
+                                            String targetid = String.valueOf(rship.endNodeId());
+                                            Map<String, Object> map = rship.asMap();
+                                            Map properties =  new HashMap<String,Object>();
+                                            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                                                String key = entry.getKey();
+                                                // rships.put(key, entry.getValue());
+                                                properties.put(key, entry.getValue());
+                                            }
+
+                                            rships.put("properties", properties);
+                                            rships.put("uuid", uuid);
+                                            rships.put("sourceid", sourceid);
+                                            rships.put("targetid", targetid);
+                                            rships.put("relation","****relation 333***"+ rship.type());
+                                            shipids.add(uuid);
+                                            if (rships != null && !rships.isEmpty()) {
+                                                ships.add(rships);
+                                            }
+                                        }
                                     }
-                                    rships.put("uuid", uuid);
-                                    rships.put("sourceid", sourceid);
-                                    rships.put("targetid", targetid);
-                                    shipids.add(uuid);
-                                    if (rships != null && !rships.isEmpty()) {
-                                        ships.add(rships);
-                                    }
-                                }
                             }
                         } else if (typeName.contains("MAP")) {
                             rss.put(pair.key(), pair.value().asMap());

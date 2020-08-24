@@ -362,10 +362,16 @@ public class Neo4jUtil {
         // cypherSql = "match (n:user) -[r]-(b:user) where n.name=\"aaa\" and b.name=\"ddd\" return r";
         cypherSql = "MATCH p=()-[r:RE]->() RETURN p LIMIT 25";
         // cypherSql = "match(n:Movie)-[r:is]-(b) where n.title=\"英雄\" return *";
-        cypherSql = "start u=node(9302) match (u)-[r1:friend]->()-[r2:seen]->(m) return m";
-        cypherSql = "start u=node(9302) match path=(u)-[:friend]->(b)-[:seen]->(movie) where not (u)-[:seen]->(movie) return movie,path";
-        cypherSql = "match (n)-[r:like*1..5]-(b) where n.name=\"eee\" return *";
+        // cypherSql = "start u=node(9302) match (u)-[r1:friend]->()-[r2:seen]->(m) return m";
+        // cypherSql = "start u=node(9302) match path=(u)-[:friend]->(b)-[:seen]->(movie) where not (u)-[:seen]->(movie) return movie,path";
+        // cypherSql = "match (n)-[r:like*1..5]-(b) where n.name=\"eee\" return *";
         // cypherSql = "match (n)-[r:like*1..2]-(b) where n.name=\"eee\" return *";
+        // cypherSql = "match (n)-[r:RELATION]-(b) where n.entity_name=\"实体02\" return n,r,b";
+        // cypherSql = "match (n)-[r:RELATION]-(b) where n.entity_name=\"实体02\" return n,r,b";
+        // cypherSql = "MATCH p=()-[r:`法律依据`]->() RETURN p LIMIT 25";
+        // cypherSql = "start n=node(1407325) match (n) return n";
+        // cypherSql = "MATCH p=()-[r:`原审`]->() RETURN p LIMIT 25";
+        // cypherSql = "start n=node(1409932) MATCH (n)-[r:原审]->(b) RETURN n,r,b";
         /************************************************/
         try {
             StatementResult result = excuteCypherSql(cypherSql);
@@ -394,6 +400,7 @@ public class Neo4jUtil {
                                     rss.put(key, entry.getValue());
                                 }
                                 rss.put("uuid", uuid);
+                                rss.put("====111===labels",noe4jNode.labels());
                                 uuids.add(uuid);
                             }
                             if (rss != null && !rss.isEmpty()) {
@@ -434,6 +441,7 @@ public class Neo4jUtil {
                                     rss.put(key, entry.getValue());
                                 }
                                 rss.put("uuid", startNodeuuid);
+                                rss.put("====2222===labels",path.start().labels());
                                 uuids.add(startNodeuuid);
                                 if (rss != null && !rss.isEmpty()) {
                                     ents.add(rss);
@@ -449,6 +457,7 @@ public class Neo4jUtil {
                                     rss.put(key, entry.getValue());
                                 }
                                 rss.put("uuid", endNodeuuid);
+                                rss.put("==444==labels", path.end().labels());
                                 uuids.add(endNodeuuid);
                                 if (rss != null && !rss.isEmpty()) {
                                     ents.add(rss);
@@ -466,6 +475,7 @@ public class Neo4jUtil {
                                         rss.put(key, entry.getValue());
                                     }
                                     rss.put("uuid", uuid);
+                                    rss.put("==333==labels",next.labels());
                                     uuids.add(uuid);
                                     if (rss != null && !rss.isEmpty()) {
                                         ents.add(rss);

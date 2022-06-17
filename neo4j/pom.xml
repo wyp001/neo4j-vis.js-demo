@@ -123,7 +123,7 @@
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
 			<!--<version>1.2.32</version>-->
-			<version>1.2.70</version>
+			<version>1.2.83</version>
 		</dependency>
 
 		<!-- Other libraries also used : Logging dependencies -->
